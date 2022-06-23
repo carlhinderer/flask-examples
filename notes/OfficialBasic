@@ -1,0 +1,180 @@
+-----------------------------------------------------------------------------
+| FLASK BASICS                                                              |
+-----------------------------------------------------------------------------
+
+(https://flask.palletsprojects.com/en/2.1.x/quickstart/)
+
+
+- Flask Philosophy
+
+    - Flask doesn't make any decisions for you, and doesn't include a database abstraction layer,
+        form validation, or anything else.  Numerous extensions provide these things.
+
+
+
+- Flask Installation
+
+    - Automatically installed dependencies:
+
+        - Werkzeug = implements WSGI, the standard Python interface between apps and servers
+        - Jinja = template language that renders pages
+        - MarkupSafe = comes with Jinja, escapes untrusted input to avoid injection attacks
+        - ItsDangerous = securely signs data to ensure it's integrity
+        - Click = framework for writing command-line applications, provides 'flask' command
+
+
+    - These dependencies are optional.  They will not be installed automatically.  If you do install
+        them, Flask will detect and use them.
+
+        - Blinker = provides support for Signals (notifications to extensions)
+        - python-dotenv = support for environment variables when running Flask commands
+        - Watchdog = provides faster, more efficient reloader for development server
+
+
+
+- Most Minimal Application
+
+    - Here is our hello world app:
+
+        # hello.py
+        --------------------
+        from flask import Flask
+
+        app = Flask(__name__)
+
+        @app.route('/')
+        def hello_world():
+            return "<p>Hello, World!</p>"
+
+
+    - Now, we can run it:
+
+        $ export FLASK_APP=hello
+        $ flask run
+
+
+    - As a shortcut, if the file is named 'app.py' or 'wsgi.py', you don't have to set the FLASK_APP
+        environment variable.
+
+
+    - Note that when we run our simple development server, it is only accessible from our own computer,
+        since any user could run arbitrary code in development mode.
+
+      If we have the debugger disabled or trust the users on our network, we can make the server
+        publicly available:
+
+        $ flask run --host=0.0.0.0
+
+
+    - Never run the development server or the debugger in production!  It gives you a debugger in the
+        page that can execute arbitrary code.  It's protected with a PIN, but still.
+
+
+
+- HTML Escaping
+
+    - When returning HTML (the default response type in Flask), any user-provided values rendered in
+        the output must be escaped to protect from injection attacks.  Jinja will do this 
+        automatically.
+
+        from markupsafe import escape
+
+        @app.route('/<name>')
+        def hello(name):
+            return f"Hello, {escape(name)}!"
+
+
+
+- Routing
+
+    - You can add variable sections to a URL.
+
+        from markupsafe import escape
+
+        @app.route('/user/<username>')
+        def show_user_profile(username):
+            # show the user profile for that user
+            return f'User {escape(username)}'
+
+        @app.route('/post/<int:post_id>')
+        def show_post(post_id):
+            # show the post with the given id, the id is an integer
+            return f'Post {post_id}'
+
+
+    - The converter types available are:
+
+        string (default)
+        int
+        float
+        path (string that accepts slashes)
+        uuid (uuid string)
+
+
+    - Routes with and without trailing slashes are treated as separate routes.
+
+
+
+- URL Building
+
+    - To build a URL for a specific function, use the 'url_for()' function.
+
+        from flask import url_for
+
+        @app.route('/')
+        def index():
+            return 'index'
+
+        @app.route('/login')
+        def login():
+            return 'login'
+
+        @app.route('/user/<username>')
+        def profile(username):
+            return f'{username}\'s profile'
+
+        with app.test_request_context():
+            print(url_for('index'))                           # /
+            print(url_for('login'))                           # /login
+            print(url_for('login', next='/'))                 # /login?next=/
+            print(url_for('profile', username='John Doe'))    # /user/John%20Doe
+
+
+
+- Handling HTTP Methods
+
+    - You can use the 'methods' argument of the 'route()' decorator to support different HTTP
+        methods.  By default, only GET is supported.
+
+        from flask import request
+
+        @app.route('/login', methods=['GET', 'POST'])
+        def login():
+            if request.method == 'POST':
+                return do_the_login()
+            else:
+                return show_the_login_form()
+
+
+    - If GET is present, Flask automatically adds support for the HEAD method also and handles HEAD
+        requests according to the HTTP RFC.
+
+      Likewise, OPTIONS is automatically implemented for you.
+
+
+
+- Static Files
+
+    - In production, you'll likely configure your web server to serve static files (ie JS and CSS).
+        During development, Flask can just do that for you.
+
+      All we need to do is create a folder called 'static' in your package or next to your module,
+        and it will be available at '/static' on the application.
+
+
+    - To generate URLs for static files, use the special 'static' endpoint name.
+
+        url_for('static', filename='style.css')
+
+
+
