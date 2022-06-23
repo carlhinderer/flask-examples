@@ -383,3 +383,175 @@
         @app.errorhandler(404)
         def page_not_found(error):
             return render_template('page_not_found.html'), 404
+
+
+
+- Responses
+
+    - The return value from a view function is automatically converted into a reponse object for you.
+        
+      If it's a string, it's converted into a response object with the string as the response body,
+        a '200' status code, and 'text/html' mimetype.
+
+      If the return value is a dict, 'jsonify()' is called to produce a response.
+
+
+    - To send a HTML response:
+
+        from flask import render_template
+
+        @app.errorhandler(404)
+        def not_found(error):
+            return render_template('error.html'), 404
+
+
+    - If we need to access the response object to change something else, we can use the 'make_response()'
+        method.
+
+        from flask import make_response
+
+        @app.errorhandler(404)
+        def not_found(error):
+            resp = make_response(render_template('error.html'), 404)
+            resp.headers['X-Something'] = 'A value'
+            return resp
+
+
+    - Flask converts return values of view methods into response objects using this logic:
+
+        1. If response object is of the correct type, it's returned directly from the view.
+
+        2. If it's a string, a response object is created with that data and the default
+             parameters.
+
+        3. If it's a dict, a response object is created using 'jsonify'.
+
+        4. If a tuple is returned, it can be of the form:
+             (response, status)
+             (response, headers)  OR
+             (response, status, headers)
+
+        5. If none of that works, Flask will assume the return value is a valid WSGI application
+             and convert that into a response object.
+
+
+
+- APIs with JSON
+
+    - If you return a dict from a view, it will be converted to a JSON response.
+
+        @app.route("/me")
+        def me_api():
+            user = get_current_user()
+            return {
+                "username": user.username,
+                "theme": user.theme,
+                "image": url_for("user_image", filename=user.image),
+            }
+
+
+    - Depending on your API design, you may want to create JSON responses for types other than
+        dict.  In this case, use the 'jsonify()' function, which will serialize any supported
+        JSON data type.
+
+        from flask import jsonify
+
+        @app.route("/users")
+        def users_api():
+            users = get_all_users()
+            return jsonify([user.to_json() for user in users])
+
+
+
+- Sessions
+
+    - In addition to the request object, there is also a second object called 'session' which allows
+        you to store information specific to a user from one request to the next.
+
+      This is implemented on top of cookies for you, and signs the cookies cryptographically, so the
+        contents cannot be modified without the secret key.
+
+
+    - To use sessions:
+
+        from flask import session
+
+        # Set the secret key to some random bytes. Keep this really secret!
+        app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+
+        @app.route('/')
+        def index():
+            if 'username' in session:
+                return f'Logged in as {session["username"]}'
+            return 'You are not logged in'
+
+        @app.route('/login', methods=['GET', 'POST'])
+        def login():
+            if request.method == 'POST':
+                session['username'] = request.form['username']
+                return redirect(url_for('index'))
+            return '''
+                <form method="post">
+                    <p><input type=text name=username>
+                    <p><input type=submit value=Login>
+                </form>
+            '''
+
+        @app.route('/logout')
+        def logout():
+            # remove the username from the session if it's there
+            session.pop('username', None)
+            return redirect(url_for('index'))
+
+
+    - One way to generate a good secret key:
+
+        $ python -c 'import secrets; print(secrets.token_hex())'
+
+
+    - With cookie-based sessions, Flask will take the values you put into the session object and
+        serialize them into a cookie.
+
+      Besides the default client-side based sessions, there are several extensions that support
+        using different cache stores.
+
+
+
+- Message Flashing
+
+    - To use flash messages, the 'flash()' method is used.  To get ahold of the messages, the
+        'get_flashed_messages()' method can be used.
+
+
+
+- Logging
+
+    - Flask includes a logger preconfigured for you to use.
+
+        app.logger.debug('A value for debugging')
+        app.logger.warning('A warning occurred (%d apples)', 42)
+        app.logger.error('An error occurred')
+
+
+    - The attached 'logger' is a standard logging 'Logger'.
+
+
+
+- Hooking in WSGI Middleware
+
+    - To add WSGI middleware, wrap the application's 'wsgi_app' attribute.  For example, to add
+        Werkzeug's 'ProxyFix' middleware for running behind Nginx:
+
+        from werkzeug.middleware.proxy_fix import ProxyFix
+        app.wsgi_app = ProxyFix(app.wsgi_app)
+
+
+    - Wrapping app.wsgi_app instead of app means that app still points at your Flask application, not 
+        at the middleware, so you can continue to use and configure app directly.
+
+
+
+- Using Flask Extensions
+
+    - Extensions are packages that help you accomplish common tasks.  For example, Flask-SQLAlchemy
+        provides SQLAlchemy support to make it easy to use with Flask.
