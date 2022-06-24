@@ -19,3 +19,4 @@ def index():
     ).fetchall()
     return render_template('blog/index.html', posts=posts)
 
+

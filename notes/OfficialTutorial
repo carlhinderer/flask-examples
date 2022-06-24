@@ -436,7 +436,14 @@
             return app
 
 
-    - Now, we'll add the 'index' route and 'index.html' template.
+    - Now, we'll add the routes:
+        index
+        create
+        update
+        delete
 
-        # flaskr/blog.py
-        ---------------------------
+      And we'll add the templates:
+        index.html
+        create.html
+        update.html
+        delete.html
