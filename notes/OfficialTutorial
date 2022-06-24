@@ -467,3 +467,84 @@
                 abort(403)
 
             return post
+
+
+
+- Make the Project Installable
+
+    - Making a project installable means that you can build a 'distribution' file and install that
+        in another environment.  This makes deploying the project the same as any other library, and
+        you can use all the standard Python tools to manage everything.
+
+    - We can manage our dependencies like other packages do, so 'pip install yourproject.whl' installs
+        them.
+
+    - Test tools can isolate your test environment from your development environment.
+
+
+
+- Describe the Project
+
+    - The 'setup.py' file describes your project and the files that belong to it.
+
+        # setup.py
+        ---------------------------
+        from setuptools import find_packages, setup
+
+        setup(
+            name='flaskr',
+            version='1.0.0',
+            packages=find_packages(),      # Automatically find the directories to include
+            include_package_data=True,     # Include folders specified in MANIFEST.in
+            zip_safe=False,
+            install_requires=[
+                'flask',
+            ],
+        )
+
+
+    - The 'MANIFEST.in' file specifies what files and folders should be included in the package.
+
+        # MANIFEST.in
+        ---------------------------
+        include flaskr/schema.sql
+        graft flaskr/static
+        graft flaskr/templates
+        global-exclude *.pyc
+
+
+
+- Install the Project
+
+    - Now, we can use pip to install our project in the virtual environment.
+
+        $ pip install -e .
+
+      This tells pip to find 'setup.py' in the current directory, and install it in 'editable'
+        ('development') mode.  This way, we can make changes to our local code, and they will
+        be reflected.  We only need to change them if we change metadata about the project.
+
+
+
+- Test Coverage
+
+    - We'll use pytest and coverage to create our tests.
+
+        $ pip install pytest coverage
+
+
+    - We'll define our fixtures in the 'tests/conftest.py' file.  First, we'll add a sql script to
+        create our test data.
+
+        # tests/data.sql
+        ---------------------------
+        INSERT INTO user (username, password)
+        VALUES
+          ('test',
+          'pbkdf2:sha256:50000$TCI4GzcX$0de171a4f4dac32e3364c7ddc7c14f3e2fa61f2d17574483f7ffbb431b4acb2f'),
+          ('other',
+           'pbkdf2:sha256:50000$kJPKsz6N$d2d4784f1b030a9761f5ccaeeaca413f27f2ecb76d6168407af962ddce849f79');
+
+        INSERT INTO post (title, body, author_id, created)
+        VALUES
+          ('test title', 'test' || x'0a' || 'body', 1, '2018-01-01 00:00:00');
