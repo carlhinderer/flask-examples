@@ -1,0 +1,58 @@
+- What is Werkzeug?
+
+    - Werkzeug is primarily a library, not a web server, although it does provide a simple web server
+        for development purposes.
+
+    - There are a bunch of web servers out there, like Apache, Nginx, Lighttpd, etc.  And there are a
+        bunch of web frameworks like Django, Flask, Pyramid, etc.  That's where WSGI comes in.
+
+
+    - There are 2 sides involved in responding to a client's HTTP request:
+
+        1. Web Server = handles intricacies of network connections, receiving request, and sending
+                          response
+
+        2. Web Application = receives data, acts on it, and crafts the response for the server to
+                               send back
+
+
+    - If you want to write a Python web application, make sure it has a callable object (ie a function)
+        that accepts certain parameters for HTTP headers, input form data, environment variables, etc.
+
+      If you want to write a web server that serves Python apps, make it call that callable object
+        from the application every time an HTTP request comes in.
+
+
+    - The 'WSGI' specification specifies exactly what the parameters for that callable must be and what
+        the return value must be, so every server knows how to talk to every application.
+
+
+    - Every web application needs to provide this callable and be able to handle the specific parameters
+        it receives.  Werkzeug is the library that does this.  It has:
+
+        - Utilities for developing WSGI-compliant applications
+        - Parses headers, handles cookies, provides access to form data
+        - Generates redirects and errors
+        - Provides an interactive debugger that runs in the browser
+        - Provides a simple development web server
+
+
+    - Flask then builds upon Werkzeug (with Jinja, Click, etc.) to build a full web framework.
+
+
+
+- Testing WSGI Applications
+
+    - Werkzeug provides a 'Client' to simulate requests to a WSGI application without starting a
+        server.  The client has methods for making different types of requests, as well as managing
+        cookies across requests.
+
+        from werkzeug.test import Client
+        from werkzeug.testapp import test_app
+
+        c = Client(test_app)
+        response = c.get('/')
+
+        response.status_code
+        response.headers
+        response.get_data(as_text=True)

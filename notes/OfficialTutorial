@@ -48,7 +48,7 @@
                 DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
             )
 
-            # If 'test_config' is passed to teh factory, it will be used instead of instance config
+            # If 'test_config' is passed to the factory, it will be used instead of instance config
             if test_config is None:
                 # Load the instance config, if it exists, when not testing
                 app.config.from_pyfile('config.py', silent=True)
@@ -434,3 +434,9 @@
             app.add_url_rule('/', endpoint='index')
 
             return app
+
+
+    - Now, we'll add the 'index' route and 'index.html' template.
+
+        # flaskr/blog.py
+        ---------------------------
