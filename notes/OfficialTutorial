@@ -393,4 +393,44 @@
 
 - Static Files
 
-    - 
+    - We'll include our styles in a static css file 'flaskr/static/style.css' file.  We already
+        have a link to it in our 'base.html' template.
+
+    - Now, we can see the styles at 'http://127.0.0.1:5000/auth/login'.
+
+
+
+- Blog Blueprint
+
+    - Now, we'll add a Blog blueprint, which will list all posts, and will allow all logged in users 
+        to create posts, and will allow a post author to edit or delete it.
+
+
+    - First, we'll define the blueprint:
+
+        # flaskr/blog.py
+        ---------------------------
+        from flask import (
+            Blueprint, flash, g, redirect, render_template, request, url_for
+        )
+        from werkzeug.exceptions import abort
+
+        from flaskr.auth import login_required
+        from flaskr.db import get_db
+
+        bp = Blueprint('blog', __name__)
+
+
+    - Next, we'll register the blueprint and add the default route in the 
+
+        # flaskr/__init__.py
+        ---------------------------
+        def create_app():
+            app = ...
+            # existing code omitted
+
+            from . import blog
+            app.register_blueprint(blog.bp)
+            app.add_url_rule('/', endpoint='index')
+
+            return app
