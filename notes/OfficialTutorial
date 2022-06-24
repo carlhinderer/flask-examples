@@ -382,4 +382,15 @@
 
     - We'll add the base layout in 'flaskr/templates/base.html'.
 
-    - We'll add the template for registering new users in 'flaskr/templates/auth/register.html'.
+    - We'll add the form for registering new users in 'flaskr/templates/auth/register.html'.
+
+    - We'll add the form for logging in in 'flaskr/templates/auth/login.html'.
+
+    - To test this, we'll navigate to 'http://127.0.0.1:5000/auth/register' to test registering
+        a new user.
+
+
+
+- Static Files
+
+    - 
