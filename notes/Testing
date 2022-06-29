@@ -1,0 +1,63 @@
+-----------------------------------------------------------------------------
+| TESTING                                                                   |
+-----------------------------------------------------------------------------
+
+- Testing Without Installing Project as Package
+
+    code
+      + src
+        + foo
+          > bar.py
+      + tests
+        + foo
+          > test_bar.py
+
+
+    # test_bar.py
+    ----------------
+    import src.foo.bar
+
+
+    # Run tests
+    $ cd code
+    $ python -m pytest tests        # This adds our current directory to the path
+
+
+
+- Testing By Installing as Package (Recommended by pytest)
+
+    - For development, use venv for virtual environments and pip for installing your application and
+        any dependencies, as well as the pytest package itself.
+
+
+    - Next, put 'pyproject.toml' and 'setup.cfg' files at the root of your package.
+
+        # pyproject.toml
+        ----------------------
+        [build-system]
+        requires = ["setuptools>=42", "wheel"]
+        build-backend = "setuptools.build_meta"
+
+
+        # setup.cfg
+        ----------------------
+        [metadata]
+        name = PACKAGENAME
+
+        [options]
+        packages = find:
+
+
+    - If your pip version is older than 21.3, you also need a 'setup.py' file.
+
+        # setup.py
+        ----------------------
+        from setuptools import setup
+
+        setup()
+
+
+    - Now, we can install our package in editable mode, which lets us change our code and tests at will.
+
+        $ cd package-root
+        $ pip install -e .
