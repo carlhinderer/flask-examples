@@ -596,3 +596,35 @@
 
 
     - Tests will use the 'client' fixture to make requests to the application.
+
+      The 'runner' fixture creates a runner that can call the 'click' commands registered with the
+        application.
+
+
+
+- Testing the Factory
+
+    - There isn't much to test about the application factory itself.  If there is a problem in the 
+        application factory, other tests will blow up anyways.
+
+      The only behavior that can change is passing test config.  If config is not passed, there should
+        be some default configuration, and if it is, it should be overridden.
+
+
+    - Also, we'll test the simple '/hello' route we started with.
+
+        # tests/test_factory.py
+        ---------------------------
+        from flaskr import create_app
+
+        def test_config():
+            assert not create_app().testing
+            assert create_app({'TESTING': True}).testing
+
+        def test_hello(client):
+            response = client.get('/hello')
+            assert response.data == b'Hello, World!'
+
+
+
+- Testing the Database
