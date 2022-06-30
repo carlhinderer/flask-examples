@@ -724,3 +724,73 @@
         test_update
         test_create_update_validate
         test_delete
+
+
+
+- Running Tests
+
+    - To run the tests:
+
+        # Run tests
+        $ pytest
+
+        # Run tests with coverage
+        $ coverage run -m pytest
+
+        # View report in terminal
+        $ coverage report
+
+        # View HTML report
+        $ coverage html
+
+
+
+- Deploying to Production
+
+    - When you want to deploy your application, you build a distribution file.  The current standard
+        for Python distribution is the 'wheel' .whl format.
+
+        $ pip install wheel
+
+
+    - Running 'setup.py' gives you a command-line tool for build-related commands.  The 'bdist_wheel'
+        command will build a wheel distribution file.
+
+        $ python setup.py bdist_wheel
+
+
+    - You'll find the file in 'dist/flaskr-1.0.0-py3-none-any.whl'.  If you create a clean virtual
+        environment, you can now install the application with pip.
+
+        $ pip install flaskr-1.0.0-py3-none-any.whl
+
+      Pip will install your application and it's dependencies.
+
+
+    - We can generate a random secret key:
+
+        $ python -c 'import secrets; print(secrets.token_hex())'
+
+        '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
+
+
+    - Now, we can create a 'config.py', and put it in the 'instance' folder, which the factory will
+        read from if it exists.
+
+
+        venv/var/flaskr-instance/config.py
+        ----------------------------------------
+        SECRET_KEY = '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
+
+
+    - We'll want to use a production WSGI server rather than the built-in Werkzeug one we use for
+        development.  Here, we'll use Waitress.
+
+        $ pip install waitress
+
+
+    - To start the application:
+
+        $ waitress-serve --call 'flaskr:create_app'
+
+        Serving on http://0.0.0.0:8080
