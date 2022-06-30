@@ -709,4 +709,18 @@
         test_login
         test_login_validate_input
         test_logout
-        
+
+
+
+- Blog
+
+    - Now, we'll add tests for the blog posts:
+
+        test_index
+        test_login_required
+        test_author_required
+        test_exists_required
+        test_create
+        test_update
+        test_create_update_validate
+        test_delete
