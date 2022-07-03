@@ -1,0 +1,33 @@
+-----------------------------------------------------------------------
+| DYNACONF                                                            |
+-----------------------------------------------------------------------
+
+- First, install dynaconf, which contains it's own Flask extension.
+
+    $ pip install dynaconf
+
+
+
+- Now, we'll use Dynaconf as a replacement for the normal configuration management in Flask.
+
+    # app.py
+    -----------------
+    from flask import Flask
+    from dynaconf import FlaskDynaconf
+
+    app = Flask(__name__)
+    FlaskDynaconf(app)
+
+
+
+- And, you can add settings files:
+
+    # Run from project root to create settings files
+    $ dynaconf init -f toml
+
+
+  Files created:
+
+    config.py         # Wires up config for Dynaconf
+    settings.toml     # Place to organize settings that go in source code
+    .secrets.toml     # Place to store secrets that don't go in source code

@@ -1,0 +1,101 @@
+-----------------------------------------------------------------------------
+| FLASK-LOGIN                                                               |
+-----------------------------------------------------------------------------
+
+- Different Types of Authentication in Web Applications
+
+    1. Using Session State
+    2. Basic and Digest Authentication
+    4. JWT/Bearer Token
+    5. API Key
+    6. OAuth 2.0
+
+
+
+- Using Session State
+
+    - De facto standard in web applications for very long time
+    - 
+
+
+
+- Basic Authentication
+
+    - Basic Authentication is an HTTP-supported 
+
+
+
+- JWT/Bearer Token
+
+
+
+- API Key
+
+    - There is no standard for this, it is different everywhere
+    - Might be sent in a header or might be sent in POST request body, for instance
+
+
+
+- OAuth 2.0
+
+
+
+
+
+- Installing and Configuring Flask-Login
+
+    - To install the extension:
+
+        $ pip install flask-login
+
+
+    - Create the 'LoginManager':
+
+        from flask_login import LoginManager
+        login_manager = LoginManager()
+
+
+    - Then, when we create the application:
+
+        login_manager.init_app(app)
+
+
+    - By default, Flask uses sessions for authentication.  This means the 'SECRET_KEY' must be set on 
+        our application.
+
+
+
+- How it works
+
+    - You need to provide a 'user_loader' callback, which reloads the object from the user_id stored in
+        the session.  For example:
+
+        @login_manager.user_loader
+        def load_user(user_id):
+            return User.get(user_id)
+
+      It should return None, not raise an exception, if the id is not valid.
+
+
+
+- Your User Class
+
+    - The class that you use to represent users needs to implement these properties and methods:
+
+        is_authenticated
+          # Returns True if user is authenticated
+
+        is_active
+          # Returns True if user has an active account
+
+        is_anonymous
+          # Returns True if anonymous user, actual users should return False
+
+        get_id
+          # Returns string used to uniquely identify the user (which is used in 'load_user')
+
+
+
+- Login Example
+
+    - 

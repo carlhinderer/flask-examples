@@ -4,3 +4,16 @@
 
 (https://flask.palletsprojects.com/en/2.1.x/patterns/)
 
+
+- Using SQLAlchemy in Flask
+
+    - There are 4 very common ways to use SqlAlchemy:
+
+        1. Use the 'Flask-SQLAlchemy' extension.  This handles the configuration for you, and is
+             recommended if you want to get started quickly.
+
+        2. Use the declarative approach.
+
+        3. Manual object relational mapping.
+
+        4. Just use the SQL abstraction layer.
