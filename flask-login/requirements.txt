@@ -1,0 +1,8 @@
+alembic
+Flask
+Flask-Login
+Flask-Migrate
+Flask-SQLAlchemy
+httpie
+passlib
+psycopg2
