@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from flask_login import login_user
+from flask_login import login_required, login_user, logout_user
 from http import HTTPStatus
 from passlib.hash import pbkdf2_sha256
 
@@ -23,7 +23,7 @@ def login():
         return jsonify({'message': 'Incorrect password.'}), HTTPStatus.FORBIDDEN
 
     login_user(user)
-    return jsonify({'message': 'Successfully logged in.'})
+    return jsonify({'message': 'Successfully logged in.'}), HTTPStatus.OK
 
 
 @auth.route('/signup', methods=['POST'])
@@ -44,6 +44,8 @@ def signup():
     return jsonify({'message': 'User created successfully.'}), HTTPStatus.CREATED
 
 
-@auth.route('/logout')
+@auth.route('/logout', methods=['POST'])
+@login_required
 def logout():
-    return 'Logout'
+    logout_user()
+    return jsonify({'message': 'Successfully logged out.'}), HTTPStatus.OK
