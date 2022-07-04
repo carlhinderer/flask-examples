@@ -93,9 +93,3 @@
 
         get_id
           # Returns string used to uniquely identify the user (which is used in 'load_user')
-
-
-
-- Login Example
-
-    - 
