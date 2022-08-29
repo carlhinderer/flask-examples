@@ -21,6 +21,10 @@ sleep 5
 docker container run --rm -d \
     --name api-container \
     --net test-net \
+    -e DB_HOST="postgres-container" \
+    -e DB_USER="myappuser" \
+    -e DB_PASSWORD="myapppw" \
+    -e DB_DATABASE="myappdb" \
     api-node
 
 # Wait 5 seconds

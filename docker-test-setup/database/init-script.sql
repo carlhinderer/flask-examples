@@ -2,7 +2,7 @@ CREATE DATABASE myappdb;
 CREATE USER myappuser WITH PASSWORD 'myapppw';
 GRANT ALL PRIVILEGES ON DATABASE myappdb TO myappuser;
 
-\c myappdb;
+\c myappdb myappuser;
 
 CREATE TABLE hobbies(
    hobby_id serial PRIMARY KEY,
