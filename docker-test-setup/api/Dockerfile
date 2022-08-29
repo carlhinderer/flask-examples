@@ -1,4 +1,6 @@
 FROM python:3.10-slim-buster
+RUN apt-get update
+RUN apt-get install curl -y
 
 WORKDIR /app
 
