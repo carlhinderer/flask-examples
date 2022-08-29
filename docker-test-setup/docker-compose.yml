@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  db:
+    image: database-node
+    build: database
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    image: api-node
+    build: api
+    environment:
+      DB_HOST: db
+      DB_USER: myappuser
+      DB_PASSWORD: myapppw
+      DB_DATABASE: myappdb
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:5000/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  test:
+    image: test-node
+    build: test
+    environment:
+      BASE_URL: http://api:5000
+    depends_on:
+      api:
+        condition: service_healthy
